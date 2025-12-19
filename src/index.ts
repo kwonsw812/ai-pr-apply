@@ -56,6 +56,14 @@ ${result.patch}
 }
 
 main().catch((e) => {
-  console.error("UNCAUGHT ERROR", e instanceof Error ? e.stack : JSON.stringify(e));
+  console.error("UNCAUGHT ERROR");
+  console.error("Type:", typeof e);
+  console.error("Constructor:", e?.constructor?.name);
+  if (e instanceof Error) {
+    console.error("Message:", e.message);
+    console.error("Stack:", e.stack);
+  } else {
+    console.error("Value:", require("util").inspect(e, { depth: 5 }));
+  }
   process.exit(1);
 });
