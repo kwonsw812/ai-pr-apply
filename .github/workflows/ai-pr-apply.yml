@@ -1,0 +1,39 @@
+name: AI PR Apply
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  apply:
+    # PR에 달린 코멘트 + /apply 인 경우만 실행
+    if: >
+      github.event.issue.pull_request &&
+      contains(github.event.comment.body, '/apply')
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write # push 하기 위해 필요
+      pull-requests: write # PR 댓글 달기 위해 필요
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # PR diff 계산에 필요
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run AI PR Apply
+        run: npm run start
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PR_NUMBER: ${{ github.event.issue.number }}

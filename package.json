@@ -1,0 +1,17 @@
+{
+  "name": "ai-pr-apply",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "@octokit/rest": "^21.0.0",
+    "execa": "^9.0.0",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.0"
+  }
+}
