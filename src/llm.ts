@@ -31,13 +31,27 @@ ${input.comments.map(
       "anthropic-version": "2023-06-01",
     },
     body: JSON.stringify({
-      model: "claude-3-5-sonnet-20240620",
+      model: "claude-sonnet-4-20250514",
       max_tokens: 2000,
       temperature: 0,
       messages: [{ role: "user", content: prompt }],
     }),
   });
 
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Anthropic API error (${res.status}): ${errorText}`);
+  }
+
   const json: any = await res.json();
+
+  if (json.error) {
+    throw new Error(`Anthropic API error: ${json.error.message}`);
+  }
+
+  if (!json.content || !json.content[0]) {
+    throw new Error(`Unexpected API response: ${JSON.stringify(json)}`);
+  }
+
   return json.content[0].text.trim();
 }
