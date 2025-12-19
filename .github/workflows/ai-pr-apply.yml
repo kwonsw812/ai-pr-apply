@@ -26,7 +26,7 @@ jobs:
         run: |
           PR_DATA=$(gh pr view ${{ github.event.issue.number }} --repo ${{ github.repository }} --json headRefName,headRepository,headRepositoryOwner)
           echo "ref=$(echo $PR_DATA | jq -r '.headRefName')" >> $GITHUB_OUTPUT
-          echo "repo=$(echo $PR_DATA | jq -r '.headRepositoryOwner.login + \"/\" + .headRepository.name')" >> $GITHUB_OUTPUT
+          echo "repo=$(echo $PR_DATA | jq -r '.headRepositoryOwner.login + "/" + .headRepository.name')" >> $GITHUB_OUTPUT
 
       - name: Checkout PR branch
         uses: actions/checkout@v4
