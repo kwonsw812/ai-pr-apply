@@ -1,7 +1,7 @@
+import { commentResult } from "./comment.js";
 import { getPRInfo } from "./github.js";
 import { generatePatch } from "./llm.js";
 import { applyPatchAndCommit } from "./patch.js";
-import { commentResult } from "./comment.js";
 
 function truncate(text: string, limit = 60000) {
   return text.length > limit
@@ -10,6 +10,12 @@ function truncate(text: string, limit = 60000) {
 }
 
 async function main() {
+  console.log("ENV CHECK", {
+  PR_NUMBER: process.env.PR_NUMBER,
+  GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY,
+  GITHUB_TOKEN: process.env.GITHUB_TOKEN ? "SET" : "MISSING",
+  ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY ? "SET" : "MISSING",
+});
   const prNumber = Number(process.env.PR_NUMBER);
   if (!prNumber) throw new Error("PR_NUMBER missing");
 
@@ -50,6 +56,6 @@ ${result.patch}
 }
 
 main().catch((e) => {
-  console.error(e);
+  console.error("UNCAUGHT ERROR", e instanceof Error ? e.stack : JSON.stringify(e));
   process.exit(1);
 });
