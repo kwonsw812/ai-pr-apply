@@ -6,22 +6,25 @@ on:
 
 jobs:
   apply:
-    # PR에 달린 코멘트 + /apply 인 경우만 실행
     if: >
       github.event.issue.pull_request &&
-      contains(github.event.comment.body, '/apply')
+      startsWith(github.event.comment.body, '/apply')
 
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write # push 하기 위해 필요
-      pull-requests: write # PR 댓글 달기 위해 필요
+      contents: write # git push
+      pull-requests: write # PR API
+      issues: write # PR comment (issue_comment)
 
     steps:
-      - name: Checkout repository
+      # ✅ PR head 브랜치 checkout (가장 중요)
+      - name: Checkout PR branch
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # PR diff 계산에 필요
+          repository: ${{ github.event.issue.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.issue.pull_request.head.ref }}
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -37,3 +40,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           PR_NUMBER: ${{ github.event.issue.number }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
