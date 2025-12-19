@@ -6,7 +6,11 @@ const octokit = new Octokit({
 });
 
 export async function getPRInfo(prNumber: number) {
-  const [owner, repo] = process.env.GITHUB_REPOSITORY!.split("/");
+const repoEnv = process.env.GITHUB_REPOSITORY;
+if (!repoEnv) {
+  throw new Error("GITHUB_REPOSITORY is missing");
+}
+const [owner, repo] = repoEnv.split("/");
 
   const comments = await octokit.pulls.listReviewComments({
     owner,
